@@ -9,9 +9,9 @@ Sub DPHTest()
                    Array("あ", "あああ", "||||||", "ううう", "あ"))
     HairetuDummy = Application.Transpose(Application.Transpose(HairetuDummy))
     
-    Call DPH(HairetuDummy, 3, "テスト1")
+    Call DPH(HairetuDummy, , "テスト1") '実行テスト1
     
-    Call DPH(HairetuDummy, , "テスト2")
+    Call DPH(HairetuDummy, 3, "テスト2") '実行テスト2(文字の長さを3以内に指定)
 
 End Sub
 
@@ -21,6 +21,7 @@ Sub DPH(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional HairetuName$)
     
     Call DebugPrintHairetu(Hairetu, HyoujiMaxNagasa, HairetuName)
 End Sub
+
 Sub DebugPrintHairetu(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional HairetuName$)
     '20201023追加
     '二次元配列をイミディエイトウィンドウに見やすく表示する
@@ -124,6 +125,7 @@ Sub DebugPrintHairetu(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional Hairetu
     Next I
     
 End Sub
+
 Function 文字列を指定バイト数文字数に省略(Mojiretu$, ByteNum%)
     '20201023追加
     '文字列を指定省略バイト文字数までの長さで省略する。
@@ -186,6 +188,7 @@ Function 文字列を指定バイト数文字数に省略(Mojiretu$, ByteNum%)
 
     
 End Function
+
 Function 文字列の各文字累計バイト数計算(Mojiretu$)
     '20201023追加
 
@@ -215,6 +218,7 @@ Function 文字列の各文字累計バイト数計算(Mojiretu$)
     文字列の各文字累計バイト数計算 = Output
     
 End Function
+
 Function 文字列分解(Mojiretu$)
     '20201023追加
 
