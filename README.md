@@ -1,5 +1,12 @@
 # VBA-配列をイミディエイトウィンドウに見やすく表示する
-VBA,Excel
+License: The MIT license
+
+Copyright (c) 2021 YujiFukami
+
+開発テスト環境 Excel: Microsoft® Excel® 2019 32bit 
+
+開発テスト環境 OS: Windows 10 Pro
+
 
 # 使い方
 モジュール「ModImmediate.bas」をVBEにインポートするか、コードをそのままVBEにコピー&ペーストする。
