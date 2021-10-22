@@ -1,6 +1,15 @@
 Attribute VB_Name = "ModImmediate"
 Option Explicit
-'イミディエイトウィンドウ活用用のプロシージャ
+
+'DPHTest                         ・・・元場所：FukamiAddins3.ModImmediate
+'DPH                             ・・・元場所：FukamiAddins3.ModImmediate
+'DebugPrintHairetu               ・・・元場所：FukamiAddins3.ModImmediate
+'文字列を指定バイト数文字数に省略・・・元場所：FukamiAddins3.ModImmediate
+'文字列の各文字累計バイト数計算  ・・・元場所：FukamiAddins3.ModImmediate
+'文字列分解                      ・・・元場所：FukamiAddins3.ModImmediate
+
+
+
 Sub DPHTest()
 
     Dim HairetuDummy
@@ -15,33 +24,52 @@ Sub DPHTest()
 
 End Sub
 
-Sub DPH(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional HairetuName$)
+Sub DPH(ByVal Hairetu, Optional HyoujiMaxNagasa As Integer, Optional HairetuName As String)
     '20210428追加
     '入力高速化用に作成
     
     Call DebugPrintHairetu(Hairetu, HyoujiMaxNagasa, HairetuName)
 End Sub
 
-Sub DebugPrintHairetu(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional HairetuName$)
-    '20201023追加
+Sub DebugPrintHairetu(ByVal Hairetu, Optional HyoujiMaxNagasa As Integer, Optional HairetuName As String)
+'20201023追加
+'20211018 入力した配列がHairetu(1 to 1)の一次元配列の場合でも処理できるように修正
+
     '二次元配列をイミディエイトウィンドウに見やすく表示する
     
-    Dim I&, J&, K&, M&, N& '数え上げ用(Long型)
-    Dim TateMin&, TateMax&, YokoMin&, YokoMax& '配列の縦横インデックス最大最小
-    Dim WithTableHairetu 'テーブル付配列…イミディエイトウィンドウに表示する際にインデックス番号を表示したテーブルを追加した配列
-    Dim NagasaList, MaxNagasaList '各文字の文字列長さを格納、各列での文字列長さの最大値を格納
-    Dim NagasaOnajiList '" "（半角スペース）を文字列に追加して各列で文字列長さを同じにした文字列を格納
-    Dim OutputList 'イミディエイトウィンドウに表示する文字列を格納
-    Const SikiriMoji$ = "|" 'イミディエイトウィンドウに表示する時に各列の間に表示する「仕切り文字」
+    Dim I       As Long
+    Dim J       As Long
+    Dim M       As Long
+    Dim N       As Long
+    Dim TateMin As Long
+    Dim TateMax As Long
+    Dim YokoMin As Long
+    Dim YokoMax As Long
+
+    Dim WithTableHairetu             'テーブル付配列…イミディエイトウィンドウに表示する際にインデックス番号を表示したテーブルを追加した配列
+    Dim NagasaList
+    Dim MaxNagasaList                '各文字の文字列長さを格納、各列での文字列長さの最大値を格納
+    Dim NagasaOnajiList              '" "（半角スペース）を文字列に追加して各列で文字列長さを同じにした文字列を格納
+    Dim OutputList                   'イミディエイトウィンドウに表示する文字列を格納
+    Const SikiriMoji As String = "|" 'イミディエイトウィンドウに表示する時に各列の間に表示する「仕切り文字」
     
     '※※※※※※※※※※※※※※※※※※※※※※※※※※※
     '入力引数の処理
-    Dim Jigen2%
+    Dim Jigen1 As Long
+    Dim Jigen2 As Long
+    Dim Tmp
     On Error Resume Next
     Jigen2 = UBound(Hairetu, 2)
     On Error GoTo 0
     If Jigen2 = 0 Then '1次元配列は2次元配列にする
-        Hairetu = Application.Transpose(Hairetu)
+        Jigen1 = UBound(Hairetu, 1) '20211018 入力した配列がHairetu(1 to 1)の一次元配列の場合でも処理できるように修正
+        If Jigen1 = 1 Then
+            Tmp = Hairetu(Jigen1)
+            ReDim Hairetu(1 To 1, 1 To 1)
+            Hairetu(1, 1) = Tmp
+        Else
+            Hairetu = Application.Transpose(Hairetu)
+        End If
     End If
     
     TateMin = LBound(Hairetu, 1) '配列の縦番号（インデックス）の最小
@@ -71,7 +99,7 @@ Sub DebugPrintHairetu(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional Hairetu
     ReDim NagasaList(1 To N, 1 To M)
     ReDim MaxNagasaList(1 To M)
     
-    Dim TmpStr$
+    Dim TmpStr As String
     For J = 1 To M
         For I = 1 To N
         
@@ -92,7 +120,7 @@ Sub DebugPrintHairetu(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional Hairetu
     'イミディエイトウィンドウに表示するために" "(半角スペース)を追加して
     '文字列長さを同じにする。
     ReDim NagasaOnajiList(1 To N, 1 To M)
-    Dim TmpMaxNagasa&
+    Dim TmpMaxNagasa As Long
     
     For J = 1 To M
         TmpMaxNagasa = MaxNagasaList(J) 'その列の最大文字列長さ
@@ -126,7 +154,7 @@ Sub DebugPrintHairetu(ByVal Hairetu, Optional HyoujiMaxNagasa%, Optional Hairetu
     
 End Sub
 
-Function 文字列を指定バイト数文字数に省略(Mojiretu$, ByteNum%)
+Function 文字列を指定バイト数文字数に省略(Mojiretu As String, ByteNum As Integer)
     '20201023追加
     '文字列を指定省略バイト文字数までの長さで省略する。
     '省略された文字列の最後の文字は"."に変更する。
@@ -135,8 +163,8 @@ Function 文字列を指定バイト数文字数に省略(Mojiretu$, ByteNum%)
     '例：Mojiretu = "魑魅XX魎" , ByteNum = 6 … 出力 = "魑魅X."
     '例：Mojiretu = "魑魅XX魎" , ByteNum = 7 … 出力 = "魑魅XX."
     
-    Dim OriginByte% '入力した文字列「Mojiretu」のバイト文字数
-    Dim Output '出力する変数を格納
+    Dim OriginByte As Integer '入力した文字列「Mojiretu」のバイト文字数
+    Dim Output                '出力する変数を格納
     
     '「Mojiretu」のバイト文字数計算
     OriginByte = LenB(StrConv(Mojiretu, vbFromUnicode))
@@ -151,10 +179,10 @@ Function 文字列を指定バイト数文字数に省略(Mojiretu$, ByteNum%)
         RuikeiByteList = 文字列の各文字累計バイト数計算(Mojiretu)
         BunkaiMojiretu = 文字列分解(Mojiretu)
         
-        Dim AddMoji$
+        Dim AddMoji As String
         AddMoji = "."
         
-        Dim I&, N&
+        Dim I As Long, N As Long
         N = Len(Mojiretu)
         
         For I = 1 To N
@@ -189,7 +217,7 @@ Function 文字列を指定バイト数文字数に省略(Mojiretu$, ByteNum%)
     
 End Function
 
-Function 文字列の各文字累計バイト数計算(Mojiretu$)
+Function 文字列の各文字累計バイト数計算(Mojiretu As String)
     '20201023追加
 
     '文字列を1文字ずつに分解して、各文字のバイト文字長を計算し、
@@ -197,14 +225,12 @@ Function 文字列の各文字累計バイト数計算(Mojiretu$)
     '例：Mojiretu="新型EKワゴン"
     '出力→Output = (2,4,5,6,7,10,12)
     
-    Dim MojiKosu%
-    MojiKosu = Len(Mojiretu)
-    
+    Dim MojiKosu As Integer
+    Dim I        As Long
+    Dim TmpMoji  As String
     Dim Output
+    MojiKosu = Len(Mojiretu)
     ReDim Output(1 To MojiKosu)
-    
-    Dim I&
-    Dim TmpMoji$
     
     For I = 1 To MojiKosu
         TmpMoji = Mid(Mojiretu, I, 1)
@@ -219,11 +245,12 @@ Function 文字列の各文字累計バイト数計算(Mojiretu$)
     
 End Function
 
-Function 文字列分解(Mojiretu$)
+Function 文字列分解(Mojiretu As String)
     '20201023追加
 
     '文字列を1文字ずつ分解して配列に格納
-    Dim I&, N&
+    Dim I     As Long
+    Dim N     As Long
     Dim Output
     
     N = Len(Mojiretu)
@@ -235,4 +262,5 @@ Function 文字列分解(Mojiretu$)
     文字列分解 = Output
     
 End Function
+
 
